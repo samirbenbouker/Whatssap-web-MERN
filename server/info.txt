@@ -1,0 +1,1 @@
+usaremos firebase para la authentificacion de usuarios i para el hosting del server
