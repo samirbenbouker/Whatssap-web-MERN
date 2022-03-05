@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors"
 
 import MessagesRouter from './resources/message/message.router.js'
 import pusher from "./pusher.js";
@@ -10,8 +11,6 @@ const app = express()
 
 const db = mongoose.connection
 db.once("open", () => {
-    console.log("DB connected")
-
     const msgCollection = db.collection("messagecontents")
     const changeStream = msgCollection.watch()
 
@@ -20,7 +19,7 @@ db.once("open", () => {
             const messageDetails = change.fullDocument
             pusher.trigger("messages", "inserted", 
                 {
-                    user: messageDetails.user,
+                    user: messageDetails.name,
                     message: messageDetails.message
                 }   
             )
@@ -32,6 +31,7 @@ db.once("open", () => {
   
 // Middleware
 app.use(express.json())
+app.use(cors())
 
 // Api routes
 app.use("/message", MessagesRouter)
